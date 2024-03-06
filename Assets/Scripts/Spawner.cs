@@ -26,4 +26,5 @@ public class Spawner : MonoBehaviour
             Instantiate(item, RandomSpawnGenerator(rangeOfSpawn), transform.rotation, transform);
         }
     }
+
 }

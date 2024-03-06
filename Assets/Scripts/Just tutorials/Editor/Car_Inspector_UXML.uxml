@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:Label tabindex="-1" text="Label-t csinaltam" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+    <uie:PropertyField binding-path="m_YearBuilt" label="Year built" style="opacity: 1; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); height: -6px;" />
+    <uie:PropertyField binding-path="m_Color" label="Color" style="height: -21px;" />
+    <uie:PropertyField binding-path="m_Tires" label="Tires" />
+    <ui:Foldout text="Default Inspector" name="Default_Inspector" />
+</ui:UXML>

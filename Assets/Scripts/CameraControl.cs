@@ -50,7 +50,7 @@ public class CameraControl : MonoBehaviour
             _cameraSpeed = 0f;
         }
 
-        Debug.Log((transform.position - player.transform.position).sqrMagnitude - lag);
+        // Debug.Log((transform.position - player.transform.position).sqrMagnitude - lag);
     }
 
 
