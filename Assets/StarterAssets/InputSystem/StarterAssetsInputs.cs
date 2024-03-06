@@ -13,8 +13,9 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 		public bool interact;
+		public bool timeJump;
 
-		[Header("Movement Settings")]
+        [Header("Movement Settings")]
 		public bool analogMovement;
 
 		[Header("Mouse Cursor Settings")]
@@ -49,9 +50,19 @@ namespace StarterAssets
 		{
 			InteractInput(value.isPressed);
 		}
+
+        public void OnTimejump(InputValue value)
+        {
+            TimejumpInput(value.isPressed);
+        }
 #endif
 
-		public void InteractInput(bool _interactIsPressed)
+        public void TimejumpInput(bool _timeJumpIsPressed)
+        {
+            timeJump = _timeJumpIsPressed;
+        }
+
+        public void InteractInput(bool _interactIsPressed)
 		{
 			interact = _interactIsPressed;
 		}

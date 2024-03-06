@@ -13,8 +13,7 @@ public class TextBillboard : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         transform.LookAt(mainCamera);
         transform.Rotate(Vector3.up, 180);
