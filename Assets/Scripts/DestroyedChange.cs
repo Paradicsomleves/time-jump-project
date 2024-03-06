@@ -4,25 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class DestoryedChange : MonoBehaviour
+public class DestroyedChange : MonoBehaviour
 {
     GameObject pastBuilding;
     GameObject presentBuilding;
     public bool IsPast = false;
 
-    public StarterAssetsInputs input;
-
-    GameObject player;
-
 
     void Start()
     {
-        player = GameObject.Find("Player");
-        input = player.GetComponent<StarterAssetsInputs>();
-
         pastBuilding = this.transform.GetChild(0).gameObject;
         presentBuilding = this.transform.GetChild(1).gameObject;
-        
+
+        ChangeObjects();
     }
 
     // Update is called once per frame
@@ -31,8 +25,6 @@ public class DestoryedChange : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeObjects();
-            Debug.Log("Anyád!");
-            
         }
         
     }
@@ -45,7 +37,7 @@ public class DestoryedChange : MonoBehaviour
             pastBuilding.SetActive(false);
             presentBuilding.SetActive(true);
             IsPast = true;
-            Debug.Log("CHANGE!");
+            //Debug.Log("CHANGE!");
 
         }
         else if (IsPast)
@@ -53,11 +45,9 @@ public class DestoryedChange : MonoBehaviour
             // We're in the past
             pastBuilding.SetActive(true);
             presentBuilding.SetActive(false);
-            Debug.Log("CHANGE!");
+            //Debug.Log("CHANGE!");
 
             IsPast = false;
         }
-        input.timeJump = false;
-
     }
 }

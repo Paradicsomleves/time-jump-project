@@ -7,8 +7,7 @@ using UnityEngine.Windows;
 public class GameManager : MonoBehaviour
 {
     public GameObject player;
-    public StarterAssetsInputs _input;
-    DestoryedChange destoryedChange;
+    DestroyedChange destoryedChange;
 
     public bool isPast;
 
@@ -18,8 +17,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        _input = player.GetComponent<StarterAssetsInputs>();
-        destoryedChange = FindObjectOfType<DestoryedChange>();
+        destoryedChange = FindObjectOfType<DestroyedChange>();
     }
 
     private void Update()

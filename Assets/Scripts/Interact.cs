@@ -65,7 +65,11 @@ public class Interact : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        textPlacement.text.SetActive(false);
+        if (other.CompareTag("PickUp") || other.CompareTag("Interact"))
+        {
+            textPlacement.text.SetActive(false);
+        }
+            
         interactable = false;
         isPickUp = false;
         isInteract = false;

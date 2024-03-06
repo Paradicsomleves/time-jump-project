@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:Label tabindex="-1" text="Label-t csinaltam" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" binding-path="ChangeObjects" />
+    <ui:Foldout text="Default Inspector" name="Default_Inspector" />
+</ui:UXML>
