@@ -42,21 +42,20 @@ public class Interact : MonoBehaviour
         if (other.CompareTag("Interact"))
         {
             textPlacement = other.GetComponent<TextPlacement>();
-            textPlacement.text.SetActive(true);
+            textPlacement.MakeVisible(true);
             interactable = true;
-            textPlacement.text.transform.position = other.transform.position + textPlacement.textOffset;
             isInteract = true;
 
         } else if (other.CompareTag("PickUp"))
         {
             textPlacement = other.GetComponent<TextPlacement>();
-            textPlacement.text.SetActive(true);
+            textPlacement.MakeVisible(true);
             interactable = true;
-            textPlacement.text.transform.position = other.transform.position + textPlacement.textOffset;
             isPickUp = true;
 
         } else
         {
+            if (textPlacement != null) textPlacement.MakeVisible(false);
             interactable = false;
             isPickUp = false;
             isInteract = false;
@@ -67,7 +66,7 @@ public class Interact : MonoBehaviour
     {
         if (other.CompareTag("PickUp") || other.CompareTag("Interact"))
         {
-            textPlacement.text.SetActive(false);
+            textPlacement.MakeVisible(false);
         }
             
         interactable = false;
