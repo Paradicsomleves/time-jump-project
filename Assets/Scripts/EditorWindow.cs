@@ -41,7 +41,9 @@ public class WorldRandomizer: EditorWindow
     public void OnClick()
     {
         Spawner spawner = FindObjectOfType<Spawner>();
+        SimplifiedSpawner simplifiedSpawner = FindObjectOfType<SimplifiedSpawner>();
         spawner.SpawnItems();
+        simplifiedSpawner.SpawnItems();
     }
 
     

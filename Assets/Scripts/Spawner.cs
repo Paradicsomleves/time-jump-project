@@ -11,7 +11,7 @@ public class Spawner : MonoBehaviour
     public float rangeOfSpawn;
 
     public float maxScale = 5;
-    public float minScale = 1;
+    public float minScale = 2.5f;
     public float centerMaxSize = 15;
     float distanceFromCenter;
 
@@ -20,6 +20,7 @@ public class Spawner : MonoBehaviour
         Vector3 randomPlace = transform.position + new Vector3(UnityEngine.Random.Range(-_rangeOfSpawn,_rangeOfSpawn), 0, UnityEngine.Random.Range(-_rangeOfSpawn,_rangeOfSpawn));
         distanceFromCenter = (transform.position - randomPlace).magnitude / rangeOfSpawn;
         distanceFromCenter = Mathf.Lerp(centerMaxSize,minScale,distanceFromCenter);
+        distanceFromCenter = Mathf.Clamp(distanceFromCenter, 1, centerMaxSize);
         return randomPlace;
     }
     Vector3 SizeGenerator(float _minScale,  float _maxScale, float _distanceFromCenter)
@@ -28,7 +29,7 @@ public class Spawner : MonoBehaviour
 
         randomSize = UnityEngine.Random.Range(_minScale, _maxScale * _distanceFromCenter);
 
-        Vector3 randomScale = new Vector3(randomSize/UnityEngine.Random.Range(3,5),randomSize, randomSize/ UnityEngine.Random.Range(3, 5));
+        Vector3 randomScale = new Vector3(UnityEngine.Random.Range(3,5),randomSize, UnityEngine.Random.Range(3, 5));
         return randomScale;
     }
 
