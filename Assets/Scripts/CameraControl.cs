@@ -5,23 +5,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//[ExecuteInEditMode]
 public class CameraControl : MonoBehaviour
 {
     public Transform player;
     public GameObject mainCamera;
-    ThirdPersonController thirdPersonController;
 
     public float lag;
     public float cameraSpeed = 2f;
     public Vector3 cameraOffset = new Vector3(0, 1, 0);
 
-    private void Start()
-    {
-        thirdPersonController = player.GetComponent<ThirdPersonController>();
-
-    }
-
-    void Update()
+    void FixedUpdate()
     {
         if (IsPlayerMoving())
         {
@@ -31,7 +25,7 @@ public class CameraControl : MonoBehaviour
         {
             CameraMovement(0f);
         }
-        mainCamera.transform.LookAt(player.position + cameraOffset);
+        //mainCamera.transform.LookAt(player.position + cameraOffset);
     }
 
     void CameraMovement(float lag)
@@ -49,8 +43,6 @@ public class CameraControl : MonoBehaviour
         {
             _cameraSpeed = 0f;
         }
-
-        // Debug.Log((transform.position - player.transform.position).sqrMagnitude - lag);
     }
 
 
