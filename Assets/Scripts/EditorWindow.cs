@@ -3,12 +3,12 @@ using UnityEngine.UIElements;
 using UnityEngine;
 using System.Xml.Linq;
 
-public class WorldRandomizer: EditorWindow
+public class WorldRandomizer : EditorWindow
 {
     [MenuItem("Window/World Randomizer")]
     public static void ShowExample()
     {
-        WorldRandomizer wnd = GetWindow<WorldRandomizer> ();
+        WorldRandomizer wnd = GetWindow<WorldRandomizer>();
         wnd.titleContent = new GUIContent("World Randomizer");
     }
 
@@ -27,9 +27,13 @@ public class WorldRandomizer: EditorWindow
         //button.text = "Button";
         //root.Add(button);
 
-        var button1 = new Button { text = "Randomize" };
-        button1.clicked += OnClick;
+        var button1 = new Button { text = "Randomize buildings" };
+        button1.clicked += OnClickBuilding;
         root.Add(button1);
+
+        var button2 = new Button { text = "Randomize fires" };
+        button2.clicked += OnClickFire;
+        root.Add(button2);
 
         //// Create toggle
         //Toggle toggle = new Toggle();
@@ -38,11 +42,17 @@ public class WorldRandomizer: EditorWindow
         //root.Add(toggle);
     }
 
-    public void OnClick()
+    public void OnClickBuilding()
     {
         Spawner spawner = FindObjectOfType<Spawner>();
         spawner.SpawnItems();
     }
 
-    
+    public void OnClickFire()
+    {
+        SimplifiedSpawner simplifiedSpawner = FindObjectOfType<SimplifiedSpawner>();
+        simplifiedSpawner.SpawnItems();
+    }
+
+
 }

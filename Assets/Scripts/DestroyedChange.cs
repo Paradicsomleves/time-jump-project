@@ -2,6 +2,8 @@ using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class DestroyedChange : MonoBehaviour
@@ -10,6 +12,8 @@ public class DestroyedChange : MonoBehaviour
     GameObject presentBuilding;
     public bool IsPast = false;
 
+    PlayerInput playerInput;
+    GameObject player;
 
     void Start()
     {
@@ -19,14 +23,13 @@ public class DestroyedChange : MonoBehaviour
         ChangeObjects();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ChangeObjects();
-        }
-        
+        GameManager.Jumping += ChangeObjects;
+    }
+    private void OnDisable()
+    {
+        GameManager.Jumping -= ChangeObjects;
     }
 
     private void ChangeObjects()
