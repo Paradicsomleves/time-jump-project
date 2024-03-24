@@ -12,24 +12,35 @@ public class Spawner : MonoBehaviour
 
     public float maxScale = 5;
     public float minScale = 2.5f;
-    public float centerMaxSize = 15;
+    public float centerMaxMultiplier = 15;
     float distanceFromCenter;
+    float sizeCenter;
+
+    [Range(0f, 1f)]
+    public float highriseRadian;
 
     Vector3 RandomSpawnGenerator(float _rangeOfSpawn)
     {
-        Vector3 randomPlace = transform.position + new Vector3(UnityEngine.Random.Range(-_rangeOfSpawn,_rangeOfSpawn), 0, UnityEngine.Random.Range(-_rangeOfSpawn,_rangeOfSpawn));
+        Vector3 randomPlace = transform.position + new Vector3(UnityEngine.Random.Range(-_rangeOfSpawn, _rangeOfSpawn), 0, UnityEngine.Random.Range(-_rangeOfSpawn, _rangeOfSpawn));
         distanceFromCenter = (transform.position - randomPlace).magnitude / rangeOfSpawn;
-        distanceFromCenter = Mathf.Lerp(centerMaxSize,minScale,distanceFromCenter);
-        distanceFromCenter = Mathf.Clamp(distanceFromCenter, 1, centerMaxSize);
+
+        sizeCenter = Mathf.Lerp(centerMaxMultiplier, minScale, distanceFromCenter);
+        sizeCenter = Mathf.Clamp(sizeCenter, 1, centerMaxMultiplier);
         return randomPlace;
     }
-    Vector3 SizeGenerator(float _minScale,  float _maxScale, float _distanceFromCenter)
+    Vector3 SizeGenerator(float _minScale, float _maxScale, float _sizeCenter)
     {
         float randomSize;
 
-        randomSize = UnityEngine.Random.Range(_minScale, _maxScale * _distanceFromCenter);
-
-        Vector3 randomScale = new Vector3(UnityEngine.Random.Range(3,5),randomSize, UnityEngine.Random.Range(3, 5));
+        if (distanceFromCenter > highriseRadian)
+        {
+            randomSize = UnityEngine.Random.Range(_minScale, _maxScale);
+        }
+        else
+        {
+            randomSize = UnityEngine.Random.Range(_minScale, _maxScale) * _sizeCenter;
+        }
+        Vector3 randomScale = new Vector3(UnityEngine.Random.Range(6, 9), randomSize, UnityEngine.Random.Range(6, 9));
         return randomScale;
     }
 
@@ -48,8 +59,8 @@ public class Spawner : MonoBehaviour
         for (int i = 0; i < numberOfItems; i++)
         {
             RandomSpawnGenerator(rangeOfSpawn);
-            GameObject newObject = Instantiate(item[UnityEngine.Random.Range(0,item.Length)], RandomSpawnGenerator(rangeOfSpawn), RandomRotation(UnityEngine.Random.Range(0,4)), transform) as GameObject;
-            newObject.transform.localScale = SizeGenerator(minScale, maxScale, distanceFromCenter);
+            GameObject newObject = Instantiate(item[UnityEngine.Random.Range(0, item.Length)], RandomSpawnGenerator(rangeOfSpawn), RandomRotation(UnityEngine.Random.Range(0, 4)), transform) as GameObject;
+            newObject.transform.localScale = SizeGenerator(minScale, maxScale, sizeCenter);
         }
     }
 
