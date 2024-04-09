@@ -8,6 +8,7 @@ TagManager:
   - CinemachineTarget
   - Interact
   - PickUp
+  - LookTarget
   layers:
   - Default
   - TransparentFX
@@ -17,9 +18,9 @@ TagManager:
   - UI
   - Player
   - PostProcessing
+  - World
   - 
-  - 
-  - 
+  - Interactable
   - 
   - 
   - 

@@ -7,70 +7,70 @@ using UnityEngine.Windows;
 
 public class Interact : MonoBehaviour
 {
-    public bool interactable;
+    public TMP_Text text;
+    public GameObject textObject;
+    ObjectProperties objectProperties;
 
-    TextPlacement textPlacement;
+    public float interactRange = 1.2f;
+
     StarterAssetsInputs _input;
-    GameManager gameManager;
     public GameObject player;
-    bool isPickUp = false;
-        bool isInteract = false;
 
     private void Start()
     {
         _input = player.GetComponent<StarterAssetsInputs>();
-        gameManager = FindObjectOfType<GameManager>();
-        interactable = false;
     }
 
     private void Update()
     {
-        if (_input.interact && interactable && isInteract)
+        if (_input.interact && objectProperties != null)
         {
-            _input.interact = false;
-            Debug.Log("Interacted!");
+            if (objectProperties.objectType == ObjectProperties.OfTypes.person)
+            {
+                _input.interact = false;
+                Debug.Log("Interacted!");
+            }
+
+            else if (objectProperties.objectType == ObjectProperties.OfTypes.item)
+            {
+                _input.interact = false;
+                Debug.Log("Picked Up!");
+            }
         }
-        if (_input.interact && interactable && isPickUp)
-        {
-            _input.interact = false;
-            Debug.Log("Picked Up!");
-        }
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Interact"))
+        if (other.TryGetComponent(out ObjectProperties _objectType))
         {
-            textPlacement = other.GetComponent<TextPlacement>();
-            textPlacement.MakeVisible(true);
-            interactable = true;
-            isInteract = true;
-
-        } else if (other.CompareTag("PickUp"))
-        {
-            textPlacement = other.GetComponent<TextPlacement>();
-            textPlacement.MakeVisible(true);
-            interactable = true;
-            isPickUp = true;
-
-        } else
-        {
-            if (textPlacement != null) textPlacement.MakeVisible(false);
-            interactable = false;
-            isPickUp = false;
-            isInteract = false;
+            objectProperties = _objectType;
+            text.text = _objectType.customOverheadText;
+            textObject.transform.position = other.transform.position + _objectType.textOffset;
+            Debug.DrawLine(player.transform.position, other.transform.position);
+            StartCoroutine(IsTargetCloseEnough(other));
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("PickUp") || other.CompareTag("Interact"))
+        if (other.TryGetComponent(out ObjectProperties _objectType))
         {
-            textPlacement.MakeVisible(false);
+            objectProperties = null;
+            textObject.SetActive(false);
+            StopAllCoroutines();
         }
-            
-        interactable = false;
-        isPickUp = false;
-        isInteract = false;
+    }
+
+    IEnumerator IsTargetCloseEnough(Collider target)
+    {
+        while (objectProperties != null)
+        {
+            if ((target.transform.position - player.transform.position).sqrMagnitude < interactRange)
+            {
+                textObject.SetActive(true);
+            } else { textObject.SetActive(false); }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }

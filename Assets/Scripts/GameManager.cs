@@ -1,11 +1,7 @@
-using StarterAssets;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,13 +10,16 @@ public class GameManager : MonoBehaviour
 
     RenderTexture screenshot;
     public RawImage image;
+    public float fade;
+    float postProcessWeight;
 
     DestroyedChange destoryedChange;
     public static GameManager instance;
 
     public bool isPast;
     public float cooldownForReturn;
-    WaitForSeconds cooldown;
+    [Range(0f, 1f)][Tooltip("On '0' backfading will happen gradually. On '1', the backfading will be instant after the cooldown")]
+    public float rampPPTimeMultiplier;
     Coroutine coroutine;
 
     bool isCoroutineRunning;
@@ -33,18 +32,20 @@ public class GameManager : MonoBehaviour
     //public Quest quest;
     //public QuestGiver questGiver;
     //public bool questIsActive;
+
     private void Awake()
     {
         instance = this;
         screenshot = new RenderTexture(Screen.width, Screen.height, 16);
-        cooldown = new WaitForSeconds(cooldownForReturn);
+
     }
+
     void Start()
     {
         destoryedChange = FindObjectOfType<DestroyedChange>();
         isPast = false;
-        timeStepEffect = player.GetComponentInChildren<Volume>();
-        image.color = new Vector4(0,0,0,0);
+        image.color = new Vector4(0, 0, 0, 0);
+        postProcessWeight = 0f;
     }
 
     private void Update()
@@ -57,74 +58,104 @@ public class GameManager : MonoBehaviour
             {
                 StartCoroutine(ActivateTimeStep(stepEffectIn, stepEffectOut));
             }
-
         }
-
     }
-
 
     IEnumerator ActivateTimeStep(float fadingSpeedIn, float fadingSpeedOut)
     {
         isCoroutineRunning = true;
-        float weight;
-        weight = 0f;
-
-        while (weight <= 1f)
+        if (coroutine != null)
         {
-            weight += Time.deltaTime/fadingSpeedIn;
-            timeStepEffect.weight = weight;
-            Debug.Log(weight);
-            yield return weight;
+            StopCoroutine(coroutine);
         }
+        
+        yield return StartCoroutine(RampingOfJump(true, true, fadingSpeedIn));
 
         if (Jumping != null)
         {
-            StartCoroutine(StillImageFade());
             Jumping();
         }
 
-        while (weight >= 0f)
-        {
-            weight -= Time.deltaTime/fadingSpeedOut;
-            timeStepEffect.weight = weight;
-            Debug.Log(weight);
-            yield return null;
-        }
-
-        isCoroutineRunning = false;
-        
+        yield return StartCoroutine(RampingOfJump(false, true, fadingSpeedOut));
 
         if (isPast)
         {
-            StartCoroutine("ReturnAfterCooldown");
-        } else
-        {
-            StopCoroutine("ReturnAfterCooldown");
+            coroutine = StartCoroutine(ReturnAfterCooldown());
         }
 
-        yield return null;
+        isCoroutineRunning = false;
+
     }
 
     IEnumerator StillImageFade()
     {
+        float _fade = 1f;
         Camera.main.targetTexture = screenshot;
         Camera.main.Render();
         Camera.main.targetTexture = null;
         image.texture = screenshot;
         image.color = Color.white;
-        float fade = 1;
+
         while (image.color.a >= 0)
         {
 
-            fade -= Time.deltaTime;
-            image.color = new Vector4(1, 1, 1, fade);
+            _fade -= Time.deltaTime / fade;
+            image.color = new Vector4(1, 1, 1, _fade);
             yield return null;
         }
     }
 
     IEnumerator ReturnAfterCooldown()
     {
-        yield return cooldown;
-        StartCoroutine(ActivateTimeStep(4f, stepEffectOut));
+        Debug.Log("Started Return Sequence");
+        float time = 0f;
+        while ((cooldownForReturn * rampPPTimeMultiplier) >= time)
+        {
+            time += Time.deltaTime;
+            //Debug.Log(time);
+            yield return null;
+        }
+        yield return StartCoroutine(RampingOfJump(true, false, cooldownForReturn * (1 - rampPPTimeMultiplier)));
+
+        if (isPast && Jumping != null)
+        {
+            Jumping();
+            Debug.Log("Jumped from cooldown");
+            StartCoroutine(RampingOfJump(false, false, stepEffectOut));
+        }
+    }
+
+    IEnumerator RampingOfJump(bool isRampingUp, bool isUserControlled, float fadingSpeed)
+    {
+        if (isRampingUp)
+        {
+            while (postProcessWeight <= 1f)
+            {
+                if (fadingSpeed <= 0f)
+                {
+                    yield break;
+                }
+                postProcessWeight += Time.deltaTime / fadingSpeed;
+                timeStepEffect.weight = postProcessWeight;
+                if (!isPast && !isUserControlled)
+                {
+                    break;
+                }
+
+                yield return null;
+            }
+            StartCoroutine(StillImageFade());
+        }
+        else
+        {
+
+            while (postProcessWeight >= 0f)
+            {
+                
+                postProcessWeight -= Time.deltaTime / fadingSpeed;
+                timeStepEffect.weight = postProcessWeight;
+                yield return null;
+            }
+        }
     }
 }
