@@ -6409,6 +6409,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 3260113109890732833}
+  head: {fileID: 0}
+  aim: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canTurnHead: 0
+  foundTarget: 0
+  headSpeed: 5
 --- !u!54 &2883020507158779428
 Rigidbody:
   m_ObjectHideFlags: 0
