@@ -11,10 +11,13 @@ public class Interact : MonoBehaviour
     public GameObject textObject;
     ObjectProperties objectProperties;
 
-    public float interactRange = 1.2f;
+    [SerializeField] float interactRange = 1.2f;
+    public bool foundTarget;
 
     StarterAssetsInputs _input;
     public GameObject player;
+
+    public Vector3 targetPos;
 
     private void Start()
     {
@@ -44,6 +47,9 @@ public class Interact : MonoBehaviour
     {
         if (other.TryGetComponent(out ObjectProperties _objectType))
         {
+            foundTarget = true;
+            targetPos = other.transform.position;
+
             objectProperties = _objectType;
             text.text = _objectType.customOverheadText;
             textObject.transform.position = other.transform.position + _objectType.textOffset;
@@ -56,9 +62,11 @@ public class Interact : MonoBehaviour
     {
         if (other.TryGetComponent(out ObjectProperties _objectType))
         {
+            
             objectProperties = null;
             textObject.SetActive(false);
             StopAllCoroutines();
+            foundTarget = false;
         }
     }
 

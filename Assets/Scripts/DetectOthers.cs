@@ -9,11 +9,11 @@ public class DetectOthers : MonoBehaviour
     [SerializeField] GameObject target;
     [SerializeField] GameObject head;
     [SerializeField] MultiAimConstraint aim;
+    Interact interact;
 
     [SerializeField] LayerMask layerMask;
 
     public bool canTurnHead;
-    bool isCoroutineRunning;
     public bool foundTarget;
     float t;
 
@@ -27,53 +27,55 @@ public class DetectOthers : MonoBehaviour
 
     private void Start()
     {
+        interact = GetComponent<Interact>();
         canTurnHead = true;
         StartCoroutine(LookingAtStuff());
         t = 0;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (target.transform.position != endPos)
         {
             t += headSpeed * Time.deltaTime;
             target.transform.position = Vector3.Lerp(startPos, endPos, t);
-            Debug.Log("fut az áthelyezés" + (t));
+            //Debug.Log("fut az áthelyezés" + (t));
         }
         else
         {
             t = 0;
         }
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("LookTarget"))
-        {
-            foundTarget = true;
-            isCoroutineRunning = false;
-            endPos = other.transform.position;
-        }
-        else if (other.CompareTag("Interact"))
-        {
-            foundTarget = true;
-            isCoroutineRunning = false;
-            endPos = other.transform.position;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("LookTarget") || other.CompareTag("Interact"))
-        {
-            foundTarget = false;
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("LookTarget"))
+    //    {
+    //        Debug.Log("LOOKTARGET");
+    //        foundTarget = true;
+    //        endPos = other.transform.position;
+    //    }
+    //    else if (other.CompareTag("Interact"))
+    //    {
+    //        foundTarget = true;
+    //        endPos = other.transform.position;
+    //    }
+    //}
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("LookTarget") || other.CompareTag("Interact"))
+    //    {
+    //        foundTarget = false;
+    //    }
+    //}
 
     IEnumerator LookingAtStuff()
     {
-        isCoroutineRunning = true;
         RaycastHit hit;
 
         Vector3 facing;
+
+        int timesTried = 0;
+        int timesTreshold = 50;
 
         while (true)
         {
@@ -81,8 +83,8 @@ public class DetectOthers : MonoBehaviour
             {
                 while (aim.weight != 1f)
                 {
-                    aim.weight = Mathf.Lerp(aim.weight, 1f, headSpeed * Time.deltaTime);
-                    // Debug.Log("fut az áthelyezés");
+                    aim.weight += Mathf.Lerp(0f, 1f, headSpeed * Time.deltaTime);
+                    Debug.Log("aim weight is not yet 1, it's actually: " + aim.weight);
                     yield return null;
                 }
                 facing = new Vector3(Randomize(-1f, 1f), Randomize(0.2f, 1f));
@@ -95,25 +97,47 @@ public class DetectOthers : MonoBehaviour
                     facing = (transform.forward + facing).normalized;
 
                     Physics.Raycast(this.transform.position, facing, out hit, 50, layerMask);
-                    //Debug.Log(facing);
+                    Debug.Log("Looking for stuff...");
+
+                    timesTried++;
+
+
+                    if (timesTried > timesTreshold)
+                    {
+                        while (SetWeight(0f) != 0f)
+                        {
+                            yield return null;
+                        }
+                    }
 
                     yield return null;
                 }
+
+                timesTried = 0;
+
+                while (SetWeight(1f) != 1f)
+                {
+                    yield return null;
+                }
+
+                
                 Debug.Log("I see something " + hit.point + "");
 
-                if (!foundTarget)
+                if (!interact.foundTarget)
                 {
                     endPos = hit.point;
+                } else
+                {
+                    endPos = interact.targetPos;
                 }
 
                 Debug.Log("End position: " + endPos);
-
             }
             else
             {
-                while (aim.weight != 0f)
+                while (aim.weight <= 0f)
                 {
-                    aim.weight = Mathf.Lerp(aim.weight, 0f, headSpeed * Time.deltaTime);
+                    aim.weight = headSpeed * Time.deltaTime;
                     // Debug.Log("fut az áthelyezés");
                     yield return null;
                 }
@@ -132,11 +156,21 @@ public class DetectOthers : MonoBehaviour
         return randomNum;
     }
 
-    void DefaultFacing()
+    float SetWeight(float weight)
     {
-        if (aim.weight > 0f)
+        if (aim.weight > weight+0.01f)
         {
             aim.weight -= headSpeed * Time.deltaTime;
         }
+        else if (aim.weight < weight-0.01f)
+        {
+            aim.weight += headSpeed * Time.deltaTime;
+        }
+        else
+        {
+             aim.weight = weight;
+        }
+        return aim.weight;
+
     }
 }

@@ -6395,7 +6395,9 @@ MonoBehaviour:
   text: {fileID: 6406709544997157640}
   textObject: {fileID: 4520457840969682842}
   interactRange: 2
+  foundTarget: 0
   player: {fileID: 7260098713824182340}
+  targetPos: {x: 0, y: 0, z: 0}
 --- !u!114 &4559965028061033271
 MonoBehaviour:
   m_ObjectHideFlags: 0
